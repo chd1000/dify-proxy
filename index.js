@@ -1,17 +1,21 @@
-// 这是升级版的“机器人”核心文件，添加了CORS支持
+// 这是最终升级版的“机器人”核心文件，添加了更强大的CORS支持
 
 const express = require('express');
 const multer = require('multer');
 const axios = require('axios');
 const FormData = require('form-data');
 const stream = require('stream');
-const cors = require('cors'); // <--- 我们新增加的“零件”
+const cors = require('cors'); // 引入“零件”
 
 const app = express();
 
-// --- 我们新增加的CORS配置 ---
-// 这段代码的意思是：允许来自任何地方的请求访问我
-app.use(cors()); 
+// --- 我们升级了CORS配置 ---
+// 这段代码的意思是：无论你从哪来，用什么方法，带什么标记，我都热情欢迎！
+app.use(cors({
+  origin: '*',
+  methods: '*',
+  allowedHeaders: '*'
+}));
 // -------------------------
 
 const upload = multer({ storage: multer.memoryStorage() });
@@ -28,7 +32,7 @@ app.post('/upload-proxy', upload.single('file'), async (req, res) => {
 
     formData.append('file', bufferStream, { filename: req.file.originalname });
 
-    // !!! 依然要确保这里的 API Key 是您自己的
+    // !!! 再次确认这里的 API Key 是您自己的，没有变
     const difyResponse = await axios.post(
       'https://api.dify.ai/v1/files/upload',
       formData,
